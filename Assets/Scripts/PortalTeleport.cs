@@ -36,7 +36,21 @@ public class PortalTeleport : MonoBehaviour
         if(playerIsOverlapping)
         {
             Vector3 portalToPlayer = player.position - transform.position;
-            Vector3.Dot(transform.up, portalToPlayer);
+            float result = Vector3.Dot(transform.up, portalToPlayer);
+
+            if (result < 0f)
+            {
+                float rotationDiff = -Quaternion.Angle(transform.rotation, receiver.rotation);
+                rotationDiff += 180;
+                player.Rotate(Vector3.up, rotationDiff);
+
+                //Quaternion - reprezentacja obrotu
+                Vector3 positionOffset = Quaternion.Euler(0f, rotationDiff, 0f) * portalToPlayer;
+
+                player.position = receiver.position + positionOffset;
+
+                playerIsOverlapping = false;
+            }
         }
     }
 
